@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.networktest
 
 import android.Manifest
@@ -25,6 +27,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.opencsv.CSVWriter
 import java.io.File
 import java.io.FileWriter
+import android.widget.Toast
+
 
 class MainActivity : AppCompatActivity(){
     private val csv = "network_info.csv"
@@ -67,6 +71,7 @@ class MainActivity : AppCompatActivity(){
         val generateButton: Button = findViewById(R.id.generate_button)
         generateButton.setOnClickListener {
             informativenessOperator()
+            Toast.makeText(this, "Arquivo CSV criado com sucesso!", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -94,8 +99,10 @@ class MainActivity : AppCompatActivity(){
         if (networkInfo != null && networkInfo.isConnected) {
             if (networkType == "MOBILE"){
                 networkTypeTextView.text = "Tipo de Rede: Dados Móveis"
+                operatorTextView.text = "Operadora: $operatorNome"
             } else {
                 networkTypeTextView.text = "Tipo de Rede: $networkType"
+                operatorTextView.text = "Provedor: $ssid"
             }
             if (linkSpeedMbps != null && linkSpeedMbps > 0) {
                 wifiSpeedTextView.text = "Velocidade Wifi: $linkSpeedMbps Mbps"
@@ -111,20 +118,8 @@ class MainActivity : AppCompatActivity(){
                 }
             }
         }
-        if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-            operatorTextView.text = "Operadora: $operatorNome"
-        }
-        if (networkType == "MOBILE"){
-            networkTypeTextView.text = "Tipo de Rede: Dados Móveis"
-            operatorTextView.text = "Operadora: $operatorNome"
-        } else if(networkType == "WIFI"){
-            networkTypeTextView.text = "Tipo de Rede: $networkType"
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && ssid.startsWith("\"") && ssid.endsWith("\"")) {
-                operatorTextView.text = "Provedor: $ssid"
-            }
-        }
 
-        val data = listOf(networkSubType)
+        val data = listOf(networkSubType, networkType, operatorNome, linkSpeedMbps, ssid)
         val csvFile: File
         val externalStorageState = Environment.getExternalStorageState()
 
@@ -137,14 +132,15 @@ class MainActivity : AppCompatActivity(){
         try {
             val csvWriter = FileWriter(csvFile)
             data.forEach { data ->
-                csvWriter.append("${networkSubType}")
-                csvWriter.append('\n')
+                csvWriter.append("${networkSubType} ", "${networkType} ","${operatorNome} ",
+                    "${linkSpeedMbps} ")
+                csvWriter.appendLine()
             }
-
             csvWriter.flush()
             csvWriter.close()
         } catch (e: IOException) {
             e.printStackTrace()
+            Toast.makeText(this, "Erro ao criar o arquivo CSV", Toast.LENGTH_SHORT).show()
         }
     }
     private inner class PingTask : AsyncTask<Void, Void, String>() {

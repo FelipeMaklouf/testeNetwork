@@ -150,8 +150,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:text="Coleta de Dados da Rede"
         android:contentDescription="@string/titleapp"
+        android:text="Coleta de Dados da Rede"
         android:textColor="#DFDFDF"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -161,15 +161,18 @@
 
     <Button
         android:id="@+id/generate_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
         android:layout_marginStart="161dp"
         android:layout_marginEnd="160dp"
-        android:layout_marginBottom="80dp"
         android:text="Gerar CSV"
+        android:textColorLink="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.509"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.769" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
