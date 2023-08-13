@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Signal Tracker</string>
+    <string name="velocidade_da_conexao">Velocidade da Conexão</string>
+    <string name="tipo_de_conexao">Tipo de Conexão:</string>
+    <string name="mnc">MNC:</string>
+    <string name="mcc">MCC:</string>
+    <string name="operator">Operadora:</string>
+    <string name="date">Data:</string>
+    <string name="hour">Hora:</string>
+    <string name="titleapp">Coleta de Dados da Rede</string>
+</resources>
