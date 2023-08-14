@@ -118,30 +118,34 @@ class MainActivity : AppCompatActivity(){
                 }
             }
         }
-
         val data = listOf(networkSubType, networkType, operatorNome, linkSpeedMbps, ssid)
-        val csvFile: File
+        val csvFileName = "network_info.csv"
+
         val externalStorageState = Environment.getExternalStorageState()
 
         if (Environment.MEDIA_MOUNTED == externalStorageState) {
-            val directory = getExternalFilesDir(null)
-            csvFile = File(directory, csv)
-        } else {
-            return
-        }
-        try {
-            val csvWriter = FileWriter(csvFile)
-            data.forEach { data ->
-                csvWriter.append("${networkSubType} ", "${networkType} ","${operatorNome} ",
-                    "${linkSpeedMbps} ")
-                csvWriter.appendLine()
+            val baseDirectory = Environment.getExternalStorageDirectory()
+            val customDirectory = File(baseDirectory, "/Documents/SignalTracker/Log")
+
+            if (!customDirectory.exists()) {
+                customDirectory.mkdirs()  // Cria a pasta personalizada se não existir
             }
-            csvWriter.flush()
-            csvWriter.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-            Toast.makeText(this, "Erro ao criar o arquivo CSV", Toast.LENGTH_SHORT).show()
+            val csvFile = File(customDirectory, csvFileName)
+            try {
+                val csvWriter = FileWriter(csvFile)
+                data.forEach { data ->
+                    csvWriter.append("${networkSubType} ", "${networkType} ","${operatorNome} ",
+                        "${linkSpeedMbps} ")
+                    csvWriter.appendLine()
+                }
+                csvWriter.flush()
+                csvWriter.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+                Toast.makeText(this, "Erro ao criar o arquivo CSV", Toast.LENGTH_SHORT).show()
+            }
         }
+
     }
     private inner class PingTask : AsyncTask<Void, Void, String>() {
         @Deprecated("Deprecated in Java")
