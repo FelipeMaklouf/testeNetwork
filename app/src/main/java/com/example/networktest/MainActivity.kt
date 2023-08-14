@@ -28,6 +28,9 @@ import com.opencsv.CSVWriter
 import java.io.File
 import java.io.FileWriter
 import android.widget.Toast
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import java.io.FileInputStream
 
 
 class MainActivity : AppCompatActivity(){
@@ -45,6 +48,8 @@ class MainActivity : AppCompatActivity(){
     private lateinit var wifiSpeedTextView: TextView
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val collectedData = mutableListOf<Array<String>>()
+    private lateinit var storage: FirebaseStorage
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +67,10 @@ class MainActivity : AppCompatActivity(){
         wifiProviderTextView = findViewById(R.id.operatorTextView)
         handler = Handler()
 
+        // Dentro do método onCreate
+        storage = FirebaseStorage.getInstance()
+
+
         // Coletar Informações
         PingTask().execute()
         informativenessOperator()
@@ -72,6 +81,27 @@ class MainActivity : AppCompatActivity(){
         generateButton.setOnClickListener {
             informativenessOperator()
             Toast.makeText(this, "Arquivo CSV criado com sucesso!", Toast.LENGTH_SHORT).show()
+            enviarDadosParaFirebase()
+        }
+    }
+
+    private fun enviarDadosParaFirebase() {
+        val storageRef = storage.reference
+        val csvFileName = "network_info.csv"
+        val fileRef = storageRef.child(csvFileName)
+
+        // Caminho completo do arquivo local
+        val caminhoDoArquivoLocal = File(Environment.getExternalStorageDirectory(), "/Documents/SignalTracker/Log/$csvFileName")
+
+        val stream = FileInputStream(caminhoDoArquivoLocal)
+        val uploadTask = fileRef.putStream(stream)
+
+        uploadTask.addOnSuccessListener {
+            // O upload foi bem-sucedido
+            Toast.makeText(this, "Arquivo enviado para o Firebase com sucesso!", Toast.LENGTH_SHORT).show()
+        }.addOnFailureListener {
+            // O upload falhou
+            Toast.makeText(this, "Erro ao enviar o arquivo para o Firebase", Toast.LENGTH_SHORT).show()
         }
     }
 
